@@ -26,3 +26,15 @@
 
 ```bash
 pip install python-docx docx2pdf pypdf
+```
+## 使用方法
+- 将文件放入根目录
+- 运行以下命令
+
+```bash
+python word_shrinker.py [输入文件.docx] [目标页数]
+```
+
+- 例子
+```bash
+python word_shrinker.py sample.docx 10
