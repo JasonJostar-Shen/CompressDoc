@@ -27,12 +27,17 @@ def set_landscape_a4(section):
 
 def set_column_count(section, num_columns):
     sectPr = section._sectPr
+    # Remove old <w:cols> if it exists
     cols = sectPr.find(qn('w:cols'))
-    if cols is None:
-        cols = OxmlElement('w:cols')
-        sectPr.append(cols)
-    cols.set(qn('w:num'), str(num_columns))
-    cols.set(qn('w:space'), '0')  # 栏间距设置为0，最大利用空间
+    if cols is not None:
+        sectPr.remove(cols)
+
+    # Create new <w:cols>
+    cols = OxmlElement('w:cols')
+    cols.set(qn('w:num'), str(num_columns))     # 栏数
+    cols.set(qn('w:space'), '0')                # 栏间距为0
+    cols.set(qn('w:equalWidth'), '1')           # 强制等宽
+    sectPr.append(cols)
 
 def resize_images(doc, max_width_inches):
     for shape in doc.inline_shapes:
@@ -70,6 +75,8 @@ def compress_layout(doc_path, output_path, strategy_level, column_count):
         if strategy_level >= 1:
             pf.space_before = 0
             pf.space_after = 0
+            pf.left_indent = Inches(0.01)  # 0.5 个字符宽
+            pf.right_indent = Inches(0)
             if contains_picture(para):
                 pf.line_spacing_rule = WD_LINE_SPACING.AT_LEAST
                 pf.line_spacing = Pt(7)
